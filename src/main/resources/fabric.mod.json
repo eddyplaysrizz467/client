@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "falcon",
+  "version": "${version}",
+  "name": "Falcon",
+  "description": "Movement-focused anticheat prototype with replay traces and a status UI.",
+  "authors": ["Falcon"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "falcon.FalconMod"
+    ],
+    "client": [
+      "falcon.client.FalconClient"
+    ]
+  },
+  "mixins": [
+    "falcon.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": "1.20.1",
+    "java": ">=17",
+    "fabric-api": "*"
+  }
+}
