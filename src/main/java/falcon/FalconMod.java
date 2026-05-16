@@ -65,7 +65,7 @@ public final class FalconMod implements ModInitializer {
         PlayerData data = playerData.computeIfAbsent(player.getUuid(), ignored -> new PlayerData(120));
         collisionProvider.withPlayer(player, () -> {
             List<CheckResult> alerts = movementListener.onMovement(
-                    new FalconPlayer(player.getUuid(), player.getGameProfile().getName()),
+                    new FalconPlayer(player.getUuid(), player.getName().getString()),
                     data,
                     packet
             );
@@ -78,7 +78,7 @@ public final class FalconMod implements ModInitializer {
         if (player.hasVehicle()) {
             exemptions.add(Exemption.VEHICLE_TRANSITION);
         }
-        if (player.isFallFlying()) {
+        if (player.isGliding()) {
             exemptions.add(Exemption.ELYTRA_TRANSITION);
         }
         if (player.isSleeping() || player.isSwimming() || player.isUsingRiptide()) {
@@ -102,7 +102,6 @@ public final class FalconMod implements ModInitializer {
     private void registerCommands() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> dispatcher.register(
                 CommandManager.literal("falcon")
-                        .requires(source -> source.hasPermissionLevel(2))
                         .then(CommandManager.literal("status").executes(context -> {
                             context.getSource().sendFeedback(() -> Text.literal(
                                     "Falcon is " + (enabled ? "enabled" : "disabled") + "; tracking " + trackedPlayers() + " players."

@@ -29,7 +29,7 @@ public final class FabricCollisionProvider implements CollisionProvider {
         if (player == null) {
             return false;
         }
-        return player.getWorld().getBlockCollisions(player, toBox(bounds)).iterator().hasNext();
+        return player.getEntityWorld().getBlockCollisions(player, toBox(bounds)).iterator().hasNext();
     }
 
     @Override
@@ -41,7 +41,7 @@ public final class FabricCollisionProvider implements CollisionProvider {
 
         List<BlockBounds> bounds = new ArrayList<>();
         Box playerBox = toBox(falcon.physics.MovementSimulator.playerBounds(state.x(), state.y(), state.z())).expand(1.0D);
-        for (VoxelShape shape : player.getWorld().getBlockCollisions(player, playerBox)) {
+        for (VoxelShape shape : player.getEntityWorld().getBlockCollisions(player, playerBox)) {
             for (Box box : shape.getBoundingBoxes()) {
                 bounds.add(fromBox(box));
             }

@@ -3,6 +3,7 @@ package falcon.mixin;
 import falcon.FalconMod;
 import falcon.packet.MovementPacket;
 import net.minecraft.network.packet.c2s.play.PlayerMoveC2SPacket;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,15 +17,18 @@ public abstract class ServerPlayNetworkHandlerMixin {
     @Shadow
     public ServerPlayerEntity player;
 
+    @Shadow
+    protected MinecraftServer server;
+
     @Inject(method = "onPlayerMove", at = @At("TAIL"))
     private void falcon$afterPlayerMove(PlayerMoveC2SPacket packet, CallbackInfo ci) {
         FalconMod falcon = FalconMod.instance();
-        if (falcon == null || player.getServer() == null) {
+        if (falcon == null) {
             return;
         }
 
         MovementPacket movementPacket = new MovementPacket(
-                player.getServer().getTicks(),
+                server.getTicks(),
                 System.nanoTime(),
                 packet.getX(player.getX()),
                 packet.getY(player.getY()),

@@ -35,7 +35,7 @@ public final class FalconScreen extends Screen {
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        renderBackground(context);
+        renderBackground(context, mouseX, mouseY, delta);
         int panelWidth = Math.min(360, width - 32);
         int panelX = (width - panelWidth) / 2;
         int panelY = height / 2 - 92;
