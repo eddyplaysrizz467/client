@@ -1,6 +1,6 @@
 # Falcon
 
-Falcon is now a Fabric Minecraft mod scaffold plus a small movement-checking core.
+Falcon is a Fabric Minecraft mod scaffold plus a small movement-checking core for Minecraft `1.21.11`, the Spear Update.
 
 Implemented:
 
@@ -21,9 +21,10 @@ Intentionally not implemented yet:
 
 Target:
 
-- Minecraft `1.20.1`
-- Fabric Loader `0.15.11+`
-- Java `17+`
+- Minecraft `1.21.11` only
+- Fabric Loader `0.18.4+`
+- Fabric API `0.141.4+1.21.11`
+- Java `21+`
 
 Core question:
 
