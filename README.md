@@ -10,7 +10,8 @@ Implemented:
 - Basic horizontal speed envelope.
 - Replay/debug trace frames.
 - Fabric server movement-packet bridge.
-- In-game client UI opened with Right Shift.
+- In-game client UI opened with `]`.
+- Basic flight/hover signal.
 - Operator commands: `/falcon status`, `/falcon on`, `/falcon off`.
 
 Intentionally not implemented yet:

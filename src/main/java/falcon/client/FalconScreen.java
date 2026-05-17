@@ -44,7 +44,7 @@ public final class FalconScreen extends Screen {
         context.fill(panelX, panelY, panelX + panelWidth, panelY + 2, 0xFF4CC9F0);
         context.drawCenteredTextWithShadow(textRenderer, title, width / 2, panelY + 14, 0xFFFFFF);
         context.drawTextWithShadow(textRenderer, "Movement alerts only. No punishments.", panelX + 22, panelY + 40, 0xCFE8EE);
-        context.drawTextWithShadow(textRenderer, "Open with Right Shift.", panelX + 22, panelY + 58, 0xAAB8C2);
+        context.drawTextWithShadow(textRenderer, "Open with ].", panelX + 22, panelY + 58, 0xAAB8C2);
         context.drawTextWithShadow(textRenderer, "Buttons run server commands. Operator permission required.", panelX + 22, panelY + 122, 0xAAB8C2);
 
         super.render(context, mouseX, mouseY, delta);

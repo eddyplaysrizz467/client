@@ -2,6 +2,7 @@ package falcon;
 
 import com.mojang.brigadier.Command;
 import falcon.api.FalconPlayer;
+import falcon.checks.movement.FlightPredictionCheck;
 import falcon.checks.movement.HorizontalPredictionCheck;
 import falcon.checks.movement.TimerCheck;
 import falcon.debug.ReplayRecorder;
@@ -15,6 +16,8 @@ import falcon.violation.CheckResult;
 import falcon.violation.ViolationTracker;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
@@ -37,7 +40,7 @@ public final class FalconMod implements ModInitializer {
     private final ViolationTracker violationTracker = new ViolationTracker();
     private final PacketListener movementListener = new PacketListener(
             simulator,
-            List.of(new TimerCheck(), new HorizontalPredictionCheck(simulator)),
+            List.of(new TimerCheck(), new HorizontalPredictionCheck(simulator), new FlightPredictionCheck()),
             replayRecorder,
             violationTracker
     );
@@ -55,6 +58,28 @@ public final class FalconMod implements ModInitializer {
     @Override
     public void onInitialize() {
         registerCommands();
+        ServerTickEvents.END_SERVER_TICK.register(this::onServerTick);
+    }
+
+    private void onServerTick(MinecraftServer server) {
+        if (!enabled) {
+            return;
+        }
+
+        for (ServerPlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            MovementPacket packet = new MovementPacket(
+                    server.getTicks(),
+                    System.nanoTime(),
+                    player.getX(),
+                    player.getY(),
+                    player.getZ(),
+                    player.getYaw(),
+                    player.getPitch(),
+                    player.isOnGround(),
+                    exemptionsFor(player)
+            );
+            handleMovement(player, packet);
+        }
     }
 
     public void handleMovement(ServerPlayerEntity player, MovementPacket packet) {

@@ -17,7 +17,7 @@ public final class FalconClient implements ClientModInitializer {
         openUi = KeyBindingHelper.registerKeyBinding(new KeyBinding(
                 "key.falcon.open_ui",
                 InputUtil.Type.KEYSYM,
-                GLFW.GLFW_KEY_RIGHT_SHIFT,
+                GLFW.GLFW_KEY_RIGHT_BRACKET,
                 KeyBinding.Category.create(Identifier.of("falcon", "main"))
         ));
 
