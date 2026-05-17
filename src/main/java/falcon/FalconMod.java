@@ -94,7 +94,7 @@ public final class FalconMod implements ModInitializer {
                     data,
                     packet
             );
-            alerts.forEach(alert -> player.sendMessage(Text.literal("[Falcon] " + alert.checkName() + ": " + alert.message()), false));
+            alerts.forEach(alert -> player.sendMessage(Text.literal("[Falcon] " + alert.checkName() + ": " + alert.message()), true));
         });
     }
 

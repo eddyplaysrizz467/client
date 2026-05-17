@@ -40,13 +40,15 @@ public final class PacketListener {
         MovementState current = simulator.toState(packet, previous);
         data.accept(packet, current);
 
-        List<CheckResult> results = checks.stream()
+        List<CheckResult> rawResults = checks.stream()
                 .map(check -> check.handle(player, data, packet))
                 .filter(CheckResult::alert)
                 .toList();
+        List<CheckResult> results = rawResults.stream()
+                .filter(result -> violationTracker.record(player, result))
+                .toList();
 
-        results.forEach(result -> violationTracker.record(player, result));
-        replayRecorder.record(player, packet, previous, current, simulator.snapshotAround(current), results, DebugTrace.from(results));
+        replayRecorder.record(player, packet, previous, current, simulator.snapshotAround(current), rawResults, DebugTrace.from(rawResults));
         return results;
     }
 }

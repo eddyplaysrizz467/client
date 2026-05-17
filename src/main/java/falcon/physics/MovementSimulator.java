@@ -44,6 +44,9 @@ public final class MovementSimulator {
         if (!current.collisionOnGround()) {
             allowed += PhysicsConstants.AIRBORNE_HORIZONTAL_ALLOWANCE;
         }
+        if (current.clientOnGround() != current.collisionOnGround()) {
+            allowed += 0.12D;
+        }
 
         double actual = current.horizontalDistanceTo(previous);
         double excess = Math.max(0.0, actual - allowed);

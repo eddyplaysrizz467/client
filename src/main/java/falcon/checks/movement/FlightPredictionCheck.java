@@ -7,8 +7,11 @@ import falcon.player.MovementState;
 import falcon.player.PlayerData;
 import falcon.violation.CheckResult;
 
+import java.util.List;
+
 public final class FlightPredictionCheck implements FalconCheck {
-    private static final double MAX_LEGAL_AIR_TIME_UPWARD_MOTION = 0.08D;
+    private static final int MIN_AIR_TICKS = 18;
+    private static final double MIN_SUSPICIOUS_VERTICAL_DELTA = -0.015D;
 
     @Override
     public String name() {
@@ -20,23 +23,38 @@ public final class FlightPredictionCheck implements FalconCheck {
         MovementState previous = data.previousState();
         MovementState current = data.currentState();
 
-        if (previous == null || current.exempt() || previous.exempt() || current.collisionOnGround()) {
+        if (previous == null || current.exempt() || previous.exempt() || current.collisionOnGround() || current.clientOnGround()) {
             return CheckResult.pass(name(), "grounded, exempt, or insufficient state");
         }
 
-        double verticalDelta = current.verticalDistanceTo(previous);
-        boolean hoveringOrRising = verticalDelta > -MAX_LEGAL_AIR_TIME_UPWARD_MOTION;
-        boolean clientClaimsAir = !current.clientOnGround();
+        if (airTicks(data) < MIN_AIR_TICKS) {
+            return CheckResult.pass(name(), "normal short air time");
+        }
 
-        if (!hoveringOrRising || !clientClaimsAir) {
+        double verticalDelta = current.verticalDistanceTo(previous);
+        boolean hoveringOrRising = verticalDelta > MIN_SUSPICIOUS_VERTICAL_DELTA;
+        if (!hoveringOrRising) {
             return CheckResult.pass(name(), "air movement still plausible");
         }
 
-        double confidence = Math.min(1.0D, (verticalDelta + MAX_LEGAL_AIR_TIME_UPWARD_MOTION) / 0.30D);
+        double confidence = Math.min(1.0D, 0.25D + ((airTicks(data) - MIN_AIR_TICKS) / 30.0D));
         return CheckResult.alert(
                 name(),
-                Math.max(0.20D, confidence),
+                confidence,
                 "player stayed airborne without expected falling motion"
         );
+    }
+
+    private static int airTicks(PlayerData data) {
+        int ticks = 0;
+        List<MovementState> snapshot = data.history().snapshot();
+        for (int i = snapshot.size() - 1; i >= 0; i--) {
+            MovementState state = snapshot.get(i);
+            if (state.collisionOnGround() || state.clientOnGround() || state.exempt()) {
+                break;
+            }
+            ticks++;
+        }
+        return ticks;
     }
 }
